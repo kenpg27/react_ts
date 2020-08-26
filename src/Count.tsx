@@ -16,7 +16,11 @@ const Count: React.FC<ICountProps> = ({ initial = 0 }) => {
 
     const countRef = useRef<number>(count);
 
+    const preCountRef = useRef<number>(count)
 
+    useEffect(() => {
+        preCountRef.current = count
+    })
 
     useEffect(() => {
         // console.log(count);
@@ -26,6 +30,20 @@ const Count: React.FC<ICountProps> = ({ initial = 0 }) => {
         })
         countRef.current = count
     }, [count])
+
+    // 组件卸载时清除定时器、事件监听等等
+    useEffect(() => {
+        const handler = () => {
+            document.title = Math.random().toString()
+            console.log(document.title);
+        }
+
+        window.addEventListener('resize', handler)
+        // 返回一个函数 用于清除
+        return () => {
+            window.removeEventListener('resize', handler)
+        }
+    }, [])
 
     const handleCount = () => {
         setTimeout(() => {
@@ -43,6 +61,7 @@ const Count: React.FC<ICountProps> = ({ initial = 0 }) => {
     return (
         <div>
             <p>Count: {count}</p>
+            <p>countRef: {countRef.current}</p>
             <button onClick={() => setCount(count + 1)}>加</button>
             <button onClick={() => setCount(count - 1)}>减</button>
             <button onClick={() => handleCount()}>弹框显示</button>
@@ -51,6 +70,9 @@ const Count: React.FC<ICountProps> = ({ initial = 0 }) => {
             <button onClickCapture={() => handleArticle()}>
                 下一篇
             </button>
+            <p>pre count: {preCountRef.current}</p>
+            <p>current count: {count}</p>
+            <button onClick={() => setCount(count + 1)}>加</button>
         </div>
     );
 
